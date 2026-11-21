@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Safia Haute Pâtisserie — Eksklyuziv Menyu</title>
+<link rel="icon" type="image/svg+xml" href="logo-icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Great+Vibes&family=Cinzel:wght@600;700;800;900&display=swap" rel="stylesheet">
+<!-- Confetti library -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+:root {
+  --bg-deep: #050307;
+  --bg-surface: #0a0710;
+  --bg-card: rgba(18, 12, 24, 0.92);
+  --gold-glow: #fff2c6;
+  --gold-light: #f7d594;
+  --gold-main: #dfa84f;
+  --gold-dark: #96671a;
+  --gold-metallic: linear-gradient(135deg, #fff7de 0%, #f7d594 25%, #dfa84f 55%, #b5802b 80%, #ffd996 100%);
+  --rose-light: #ffdbe4;
+  --rose-main: #e87b96;
+  --rose-deep: #8a1f3a;
+  --txt-main: #ffffff;
+  --txt-sub: #dcd0d9;
+  --txt-muted: #8c7785;
+  --border-gold: rgba(223, 168, 79, 0.35);
+  --border-glass: rgba(255, 255, 255, 0.09);
+  --shadow-gold: 0 16px 50px rgba(223, 168, 79, 0.35);
+  --shadow-royal: 0 30px 90px rgba(0, 0, 0, 0.95), 0 0 40px rgba(223, 168, 79, 0.25);
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-script: 'Great Vibes', cursive;
+  --font-royal: 'Cinzel', serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-deep);
+  color: var(--txt-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding-bottom: 90px;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #070409; }
+::-webkit-scrollbar-thumb { background: linear-gradient(var(--gold-main), var(--rose-main)); border-radius: 999px; }
+
+/* Aurora Mesh Background */
+.aurora-mesh {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 65% 55% at 15% 15%, rgba(223, 168, 79, 0.16) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 85% 25%, rgba(138, 31, 58, 0.20) 0%, transparent 65%),
+    radial-gradient(ellipse 65% 65% at 50% 85%, rgba(192, 132, 252, 0.12) 0%, transparent 70%);
+  filter: blur(60px);
+}
+
+.gold-shine {
+  background: var(--gold-metallic);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  text-shadow: 0 0 35px rgba(223, 168, 79, 0.45);
+}
+
+/* Top Navigation */
+nav {
+  position: sticky; top: 0; left: 0; right: 0; z-index: 1000;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; height: 75px;
+  background: rgba(6, 4, 8, 0.92);
+  backdrop-filter: blur(30px);
+  border-bottom: 1px solid rgba(223, 168, 79, 0.25);
+}
+.nav-brand-logo { height: 46px; width: auto; }
+.nav-actions { display: flex; align-items: center; gap: 10px; }
+
+.nav-btn {
+  height: 42px; border-radius: 999px; padding: 0 18px;
+  font-size: 0.85rem; font-weight: 700; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+  transition: all 0.3s; text-decoration: none; border: none;
+}
+.cart-nav-btn {
+  background: linear-gradient(135deg, #a62043 0%, #db5e7e 55%, #eb7c97 100%);
+  color: #fff; box-shadow: 0 4px 18px rgba(219, 94, 126, 0.4);
+  position: relative;
+}
+.cart-badge {
+  background: #fff; color: #a62043; border-radius: 50%;
+  width: 20px; height: 20px; display: none; align-items: center; justify-content: center;
+  font-size: 0.72rem; font-weight: 900;
+}
+.admin-nav-btn {
+  background: rgba(223, 168, 79, 0.15); border: 1px solid var(--gold-main);
+  color: var(--gold-light);
+}
+
+/* Menu Page Content */
+.menu-container {
+  max-width: 1260px; margin: 0 auto; padding: 32px 20px 80px; position: relative; z-index: 2;
+}
+.menu-header { text-align: center; margin-bottom: 34px; }
+.table-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(223, 168, 79, 0.15); border: 1px solid var(--border-gold);
+  padding: 7px 22px; border-radius: 999px; margin-bottom: 14px;
+  font-weight: 800; font-size: 0.88rem; color: var(--gold-light); letter-spacing: 1.2px;
+}
+.menu-title {
+  font-family: var(--font-serif); font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 700;
+}
+.menu-desc {
+  color: var(--txt-sub); font-size: 0.95rem; margin-top: 8px;
+}
+
+/* Search Box */
+.search-box-wrap {
+  max-width: 540px; margin: 24px auto 28px; position: relative;
+}
+.search-input {
+  width: 100%; background: rgba(22, 16, 30, 0.9);
+  border: 1px solid var(--border-gold); border-radius: 999px;
+  padding: 15px 48px 15px 24px; font-size: 0.95rem; color: #fff; outline: none;
+}
+.search-input:focus { border-color: var(--gold-light); box-shadow: 0 0 25px rgba(223, 168, 79, 0.4); }
+.search-ico { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); color: var(--gold-main); font-size: 1.15rem; }
+
+/* Category Pills */
+.category-pills {
+  display: flex; gap: 9px; overflow-x: auto; padding-bottom: 24px; justify-content: flex-start; scrollbar-width: none;
+}
+@media (min-width: 768px) { .category-pills { justify-content: center; } }
+.category-pills::-webkit-scrollbar { display: none; }
+.cat-pill {
+  flex-shrink: 0; background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-glass); border-radius: 999px;
+  padding: 10px 22px; font-size: 0.86rem; font-weight: 700;
+  color: var(--txt-sub); cursor: pointer; transition: all 0.25s;
+}
+.cat-pill.active {
+  background: var(--gold-metallic); color: #000; border-color: transparent;
+  box-shadow: 0 4px 18px rgba(223, 168, 79, 0.45);
+}
+
+/* Food Cards Grid */
+.menu-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(285px, 1fr)); gap: 26px;
+}
+.dessert-card {
+  background: var(--bg-card); border: 1px solid var(--border-glass);
+  border-radius: 28px; overflow: hidden; display: flex; flex-direction: column;
+  transition: all 0.35s ease;
+}
+.dessert-card:hover {
+  transform: translateY(-8px); border-color: var(--border-gold);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.8), var(--shadow-gold);
+}
+.dc-photo-box { height: 215px; position: relative; overflow: hidden; background: #0e0a14; }
+.dc-real-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+.dessert-card:hover .dc-real-img { transform: scale(1.1); }
+.dc-badge {
+  position: absolute; top: 14px; left: 14px;
+  background: linear-gradient(135deg, var(--rose-deep), var(--rose-main));
+  color: #fff; font-size: 0.68rem; font-weight: 800; letter-spacing: 1px;
+  padding: 5px 12px; border-radius: 999px; text-transform: uppercase;
+}
+.dc-body {
+  padding: 22px 24px; flex: 1; display: flex; flex-direction: column; justify-content: space-between;
+}
+.dc-name { font-family: var(--font-serif); font-size: 1.4rem; font-weight: 700; margin-bottom: 6px; }
+.dc-desc { font-size: 0.82rem; color: var(--txt-muted); line-height: 1.5; margin-bottom: 18px; }
+.dc-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.dc-price { font-family: var(--font-serif); font-size: 1.45rem; font-weight: 700; color: var(--gold-light); }
+.dc-add-btn {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--rose-deep), var(--rose-main));
+  border: none; color: #fff; font-size: 1.4rem; font-weight: 700;
+  cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center;
+}
+.dc-add-btn:hover { transform: scale(1.1); }
+.dc-add-btn.added { background: linear-gradient(135deg, #059669, #10b981); }
+
+/* Cart Drawer / Modal */
+.cart-modal {
+  position: fixed; inset: 0; z-index: 2000;
+  background: rgba(0,0,0,0.85); backdrop-filter: blur(16px);
+  display: none; align-items: center; justify-content: center; padding: 20px;
+}
+.cart-modal.active { display: flex; }
+.cart-card {
+  background: linear-gradient(165deg, #241432 0%, #11081a 60%, #08030e 100%);
+  border: 1px solid var(--border-gold); border-radius: 34px; padding: 32px 26px;
+  max-width: 520px; width: 100%; max-height: 90vh; overflow-y: auto;
+}
+.cart-item-row {
+  display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.cir-thumb { width: 55px; height: 55px; border-radius: 14px; object-fit: cover; }
+.cir-ctrl { display: flex; align-items: center; gap: 8px; }
+.cir-btn {
+  width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2); color: #fff; cursor: pointer; font-size: 1.1rem;
+}
+.cir-btn:hover { background: var(--gold-main); color: #000; }
+.order-btn {
+  width: 100%; background: var(--gold-metallic); color: #000; font-weight: 800; font-size: 1.05rem;
+  padding: 16px; border: none; border-radius: 999px; cursor: pointer; margin-top: 20px;
+}
+
+/* Toast */
+#toast {
+  position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%) translateY(100px);
+  background: rgba(24, 15, 30, 0.95); border: 1px solid var(--gold-main);
+  border-radius: 999px; padding: 12px 28px; font-size: 0.9rem; font-weight: 700; color: #fff;
+  z-index: 9999; transition: transform 0.3s; pointer-events: none;
+}
+#toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="aurora-mesh"></div>
+<div id="toast">Muvaffaqiyatli!</div>
+
+<!-- Navigation -->
+<nav>
+  <div style="display:flex; align-items:center; gap:12px;">
+    <img src="logo.svg" class="nav-brand-logo" alt="Safia">
+  </div>
+  <div class="nav-actions">
+    <button class="nav-btn admin-nav-btn" onclick="window.location.href='index.html#admin'">
+      ⚙️ Admin
+    </button>
+    <button class="nav-btn cart-nav-btn" onclick="openCartModal()">
+      <span>🛒 Savat</span>
+      <span class="cart-badge" id="cart-badge">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- Main Menu Catalog -->
+<div class="menu-container">
+  <div class="menu-header">
+    <div class="table-pill" id="table-display">🟢 STOL #1 • MENYU FAOL</div>
+    <h1 class="menu-title gold-shine">Eksklyuziv Shirinliklar Menyusi</h1>
+    <p class="menu-desc">Belgiya shokoladi, tabiiy mevalar va Safia qandolatchilik san'ati durdonalari</p>
+  </div>
+
+  <!-- Search Filter -->
+  <div class="search-box-wrap">
+    <input type="text" id="search-input" class="search-input" placeholder="Shirinlik nomini qidiring (masalan: San Sebastian, Kruassan...)" oninput="filterMenu()">
+    <span class="search-ico">🔍</span>
+  </div>
+
+  <!-- Categories -->
+  <div class="category-pills" id="category-pills"></div>
+
+  <!-- Cards Grid -->
+  <div class="menu-grid" id="menu-grid"></div>
+</div>
+
+<!-- Cart Modal -->
+<div class="cart-modal" id="cart-modal">
+  <div class="cart-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+      <h2 style="font-family:var(--font-serif); font-size:1.8rem; color:var(--gold-light);">Savatchangiz</h2>
+      <button onclick="closeCartModal()" style="background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer;">✕</button>
+    </div>
+
+    <div id="cart-items-container"></div>
+
+    <div style="margin-top:20px; padding-top:14px; border-top:1px dashed rgba(255,255,255,0.2); display:flex; justify-content:space-between; font-size:1.2rem; font-weight:800;">
+      <span>Jami:</span>
+      <span style="color:var(--gold-light)" id="cart-total-price">0 so'm</span>
+    </div>
+
+    <button class="order-btn" onclick="submitOrder()">✨ Buyurtmani Stolga Yuborish</button>
+  </div>
+</div>
+
+<script>
+const DESSERTS = [
+  {
+    id: 0,
+    name: "Safia Signature Shokolad Torti",
+    cat: "Tortlar",
+    price: 120000,
+    badge: "🌟 Best-seller",
+    img: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=900&q=85",
+    desc: "3 qavat qora Belgiya shokoladi, tabiiy qulupnayli mousse va haqiqiy yeyiladigan tilla zarrachalari."
+  },
+  {
+    id: 1,
+    name: "San Sebastian Cheesecake",
+    cat: "Chizkeyklar",
+    price: 48000,
+    badge: "🔥 Mashhur",
+    img: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=900&q=85",
+    desc: "Basklar mamlakatining afsonaviy chizkeyki. Kuydirilgan karamel hidli, ichki qismi ipakdek kremli pishloq."
+  },
+  {
+    id: 2,
+    name: "Red Velvet (Qizil Baxmal)",
+    cat: "Tortlar",
+    price: 52000,
+    badge: "❤️ Sevimli",
+    img: "https://images.unsplash.com/photo-1586788680434-30d324b2d46f?auto=format&fit=crop&w=900&q=85",
+    desc: "Baxmalsimon qizil biskvit qavatlari va original Filadelfiya pishlog'idan tayyorlangan havodor krem."
+  },
+  {
+    id: 3,
+    name: "Dubay Pistachio Kruassan",
+    cat: "Kruassanlar",
+    price: 38000,
+    badge: "✨ Trend 2026",
+    img: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=900&q=85",
+    desc: "Fransuzcha 72 qavatli qarsildoq kruassan, ichida quyuq pista pastasi va kataifi qandolati bilan to'la."
+  },
+  {
+    id: 4,
+    name: "Krem Brüle Royal",
+    cat: "Desertlar",
+    price: 35000,
+    badge: "🇫🇷 Parijcha",
+    img: "https://images.unsplash.com/photo-1470124182917-cc6e71b22ecc?auto=format&fit=crop&w=900&q=85",
+    desc: "Olov bilan qarsildoq qilingan shakar qobig'i va Madagaskar vanili bilan boyitilgan nozik kremli desert."
+  },
+  {
+    id: 5,
+    name: "Fransuz Ekleri (Assorti)",
+    cat: "Kruassanlar",
+    price: 32000,
+    badge: "🌸 Nozik",
+    img: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=900&q=85",
+    desc: "Nozik choux xamiridan pishirilgan va vanilli qaymoqli krem bilan to'ldirilgan klassik parij ekleri."
+  },
+  {
+    id: 6,
+    name: "Turkcha Pista Baklavasi",
+    cat: "Sharqona",
+    price: 45000,
+    badge: "🌿 Antep pista",
+    img: "https://images.unsplash.com/photo-1519676867240-f03562e64548?auto=format&fit=crop&w=900&q=85",
+    desc: "40 qatlamli ipakdek yupqa filo xamiri, yangi Gaziantep pistasi va tog' asal siropi bilan quyilgan."
+  },
+  {
+    id: 7,
+    name: "Tiramisu Tradizionale",
+    cat: "Desertlar",
+    price: 42000,
+    badge: "🇮🇹 Rim",
+    img: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=900&q=85",
+    desc: "Espressoga botirilgan Savoyardi pechenyelari, yangi Maskarpone pishlog'i va kakao kukuni."
+  },
+  {
+    id: 8,
+    name: "Malinali Qarsildoq Tartaletka",
+    cat: "Desertlar",
+    price: 36000,
+    badge: "🍓 Yangi meva",
+    img: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=900&q=85",
+    desc: "Qarsildoq qum xamiri savatchasi, ichida vanil kremi va ustida yangi uzilgan shirali malinalar."
+  },
+  {
+    id: 9,
+    name: "Tropik Mango Panna Cotta",
+    cat: "Desertlar",
+    price: 34000,
+    badge: "☀️ Salqin",
+    img: "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=900&q=85",
+    desc: "Italyancha silliq vanilli qaymoq va pishgan tropik mango pyuresi bilan yozgi salqin kayfiyat."
+  },
+  {
+    id: 10,
+    name: "Shokoladli Issiq Fondan",
+    cat: "Tortlar",
+    price: 46000,
+    badge: "🌋 Suyuq qalb",
+    img: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=900&q=85",
+    desc: "Ichidan qaynoq shokolad oqib chiqadigan pirog, vanilli qaymoqli muzqaymoq bilan birga taqdim etiladi."
+  },
+  {
+    id: 11,
+    name: "Oltin Raf Qahvasi",
+    cat: "Ichimliklar",
+    price: 28000,
+    badge: "✨ Maxsus",
+    img: "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?auto=format&fit=crop&w=900&q=85",
+    desc: "Espresso, tabiiy issiq qaymoq va Madagaskar vanili ko'pirtirib tayyorlangan qandolat uyi ichimligi."
+  }
+];
+
+const CATEGORIES = ["Barchasi", "Tortlar", "Chizkeyklar", "Kruassanlar", "Sharqona", "Desertlar", "Ichimliklar"];
+
+let currentCategory = "Barchasi";
+let cart = [];
+let currentStol = 1;
+
+// URL dan stol raqamini olish (?stol=3)
+const params = new URLSearchParams(window.location.search);
+if (params.get('stol')) {
+  currentStol = parseInt(params.get('stol')) || 1;
+}
+document.getElementById('table-display').textContent = `🟢 STOL #${currentStol} • MENYU FAOL`;
+
+function initCategories() {
+  const container = document.getElementById('category-pills');
+  container.innerHTML = CATEGORIES.map(cat => `
+    <button class="cat-pill ${cat === currentCategory ? 'active' : ''}" onclick="selectCategory('${cat}')">
+      ${cat}
+    </button>
+  `).join('');
+}
+
+function selectCategory(cat) {
+  currentCategory = cat;
+  initCategories();
+  renderGrid();
+}
+
+function filterMenu() {
+  renderGrid();
+}
+
+function renderGrid() {
+  const q = (document.getElementById('search-input')?.value || '').toLowerCase();
+  const grid = document.getElementById('menu-grid');
+
+  const list = DESSERTS.filter(d => {
+    const matchC = currentCategory === "Barchasi" || d.cat === currentCategory;
+    const matchQ = !q || d.name.toLowerCase().includes(q) || d.desc.toLowerCase().includes(q);
+    return matchC && matchQ;
+  });
+
+  if (list.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:50px; color:var(--txt-muted);">Bunday shirinlik topilmadi.</div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map(item => {
+    const isAdded = cart.some(c => c.id === item.id);
+    return `
+      <div class="dessert-card">
+        <div class="dc-photo-box">
+          <img class="dc-real-img" src="${item.img}" alt="${item.name}" loading="lazy">
+          <span class="dc-badge">${item.badge}</span>
+        </div>
+        <div class="dc-body">
+          <div>
+            <h3 class="dc-name">${item.name}</h3>
+            <p class="dc-desc">${item.desc}</p>
+          </div>
+          <div class="dc-footer">
+            <span class="dc-price">${item.price.toLocaleString('uz-UZ')} so'm</span>
+            <button class="dc-add-btn ${isAdded ? 'added' : ''}" onclick="addToCart(${item.id})">
+              ${isAdded ? '✓' : '+'}
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function addToCart(id) {
+  const ex = cart.find(c => c.id === id);
+  if (ex) ex.qty += 1;
+  else cart.push({ id, qty: 1 });
+
+  updateCartBadge();
+  renderGrid();
+  const item = DESSERTS.find(d => d.id === id);
+  showToast(`✨ ${item ? item.name : ''} savatga qo'shildi`);
+}
+
+function updateCartQty(id, delta) {
+  const ex = cart.find(c => c.id === id);
+  if (!ex) return;
+  ex.qty += delta;
+  if (ex.qty <= 0) cart = cart.filter(c => c.id !== id);
+  updateCartBadge();
+  renderCartModal();
+  renderGrid();
+}
+
+function updateCartBadge() {
+  const total = cart.reduce((s, c) => s + c.qty, 0);
+  const badge = document.getElementById('cart-badge');
+  if (total > 0) {
+    badge.style.display = 'flex';
+    badge.textContent = total;
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function openCartModal() {
+  renderCartModal();
+  document.getElementById('cart-modal').classList.add('active');
+}
+function closeCartModal() {
+  document.getElementById('cart-modal').classList.remove('active');
+}
+
+function renderCartModal() {
+  const container = document.getElementById('cart-items-container');
+  if (cart.length === 0) {
+    container.innerHTML = `<div style="text-align:center; padding:30px; color:var(--txt-muted);">Savatchangiz bo'sh</div>`;
+    document.getElementById('cart-total-price').textContent = "0 so'm";
+    return;
+  }
+
+  let sum = 0;
+  container.innerHTML = cart.map(c => {
+    const d = DESSERTS.find(x => x.id === c.id);
+    if (!d) return '';
+    sum += d.price * c.qty;
+    return `
+      <div class="cart-item-row">
+        <img class="cir-thumb" src="${d.img}" alt="">
+        <div style="flex:1;">
+          <div style="font-weight:700; font-size:0.95rem;">${d.name}</div>
+          <div style="color:var(--gold-light); font-size:0.85rem;">${d.price.toLocaleString('uz-UZ')} so'm × ${c.qty}</div>
+        </div>
+        <div class="cir-ctrl">
+          <button class="cir-btn" onclick="updateCartQty(${d.id}, -1)">−</button>
+          <span style="font-weight:700; min-width:18px; text-align:center;">${c.qty}</span>
+          <button class="cir-btn" onclick="updateCartQty(${d.id}, 1)">+</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('cart-total-price').textContent = sum.toLocaleString('uz-UZ') + " so'm";
+}
+
+function submitOrder() {
+  if (cart.length === 0) return;
+
+  if (typeof confetti === 'function') confetti({ particleCount: 100, spread: 70 });
+  const ordId = Math.floor(1000 + Math.random() * 9000);
+
+  // Admin panel uchun buyurtmani saqlash
+  const total = cart.reduce((s, c) => {
+    const d = DESSERTS.find(x => x.id === c.id);
+    return s + (d ? d.price * c.qty : 0);
+  }, 0);
+
+  const orderObj = {
+    id: 'SF-' + ordId,
+    stol: currentStol,
+    time: new Date().toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' }),
+    items: cart.map(c => {
+      const d = DESSERTS.find(x => x.id === c.id);
+      return `${c.qty}x ${d ? d.name : 'Shirinlik'}`;
+    }).join(', '),
+    total: total,
+    status: 'Yangi'
+  };
+
+  const oldOrders = JSON.parse(localStorage.getItem('safia_orders') || '[]');
+  oldOrders.unshift(orderObj);
+  localStorage.setItem('safia_orders', JSON.stringify(oldOrders));
+
+  alert(`✨ BUYURTMA QABUL QILINDI!\n\nBuyurtma raqami: #SF-${ordId}\nStol: #${currentStol}\n\nQandolatchilarimiz buyurtmangizni tayyorlamoqda. Yoqimli ishtaha!`);
+  
+  cart = [];
+  updateCartBadge();
+  closeCartModal();
+  renderGrid();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  initCategories();
+  renderGrid();
+});
+</script>
+</body>
+</html>
